@@ -1,0 +1,11 @@
+{
+  "runtime": {
+    "version": "LuaJIT"
+  },
+  "workspace": {
+    "library": [
+      "/home/krjb/.luarocks/share/lua/5.4"
+    ],
+    "checkThirdParty": false
+  }
+}
