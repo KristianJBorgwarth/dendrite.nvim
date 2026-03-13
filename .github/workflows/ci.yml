@@ -23,7 +23,9 @@ jobs:
           sudo apt-get install -y neovim lua5.1 lua-busted
 
       - name: Run tests
-        run: busted spec
+        run: |
+          export LUA_PATH="./lua/?.lua;./lua/?/init.lua;;"
+          busted spec
 
       - name: Verify Neovim loads plugin
         run: nvim --headless --cmd "set rtp+=." "+lua require('dendrite').setup({})" +qa
