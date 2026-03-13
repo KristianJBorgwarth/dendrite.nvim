@@ -17,13 +17,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install Neovim and Lua tooling
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y neovim lua5.1 luarocks liblua5.1-dev
+          sudo apt-get install -y neovim lua5.1 lua-busted
 
-      - name: Install busted
-        run: luarocks --lua-version=5.1 install busted --local
+      - name: Run tests
+        run: busted spec
 
-      - name: Run busted specs
-        run: busted lua/spec
+      - name: Verify Neovim loads plugin
+        run: nvim --headless --cmd "set rtp+=." "+lua require('dendrite').setup({})" +qa
