@@ -10,7 +10,8 @@
       "after_each",
       "setup",
       "teardown",
-      "assert"
+      "assert",
+            "note"
     ]
   },
     "diagnostics.disable": [

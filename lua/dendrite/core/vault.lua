@@ -43,5 +43,28 @@ function M.list_directories(vault_path, depth)
   return results
 end
 
+function M.read_file(path)
+  local file = io.open(path, "r")
+  if not file then
+    error("Could not read file: " .. path)
+  end
+  local content = file:read("*a")
+  file:close()
+  return content
+end
+
+
+--- Check if a file exists at the given path.
+---@param path string the file path to check for existence
+---@return boolean true if a file exists at the given path, false otherwise
+function M.file_exists(path)
+  local file = io.open(path, "r")
+  if file then
+    file:close()
+    return true
+  end
+  return false
+end
+
 
 return M
