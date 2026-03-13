@@ -11,14 +11,14 @@ local defaults = {
   },
 }
 
-M.options = defaults
+M.options = vim.deepcopy(defaults)
 
 function M.setup(opts)
   opts = opts or {}
 
   M.options = vim.tbl_deep_extend(
     "force",
-    defaults,
+    vim.deepcopy(defaults),
     opts)
 end
 
