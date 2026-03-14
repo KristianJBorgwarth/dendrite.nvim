@@ -2,13 +2,12 @@ local M = {}
 
 local defaults = {
   vault = "~/dendrite-vault",
-
   templates_dir = "~/dendrite-vault/.templates",
-
   daily_notes = {
     dir = "~/dendrite-vault/daily",
     filename_format = "%Y-%m-%d.md",
   },
+  use_default_frontmatter = true,
 }
 
 M.options = vim.deepcopy(defaults)
