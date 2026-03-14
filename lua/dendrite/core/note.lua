@@ -6,7 +6,7 @@ local M = {}
 function M._render_template(template, vars)
   return (template:gsub("{{(.-)}}", function(key)
     if vars[key] == nil then
-      error("Missing variable for template: " .. key)
+      return nil
     end
     return vars[key]
   end))
