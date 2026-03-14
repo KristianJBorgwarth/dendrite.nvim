@@ -29,7 +29,7 @@ function M.list_directories(vault_path, depth)
   assert(type(depth) == "number" and depth > 0, "depth must be a positive number")
 
   local results = {}
-  local find_command = 'find "' .. vault_path .. '" -type d -mindepth 1 -maxdepth ' .. depth
+  local find_command = 'find "' .. vault_path .. '" -mindepth 1 -maxdepth ' .. depth .. ' -type d 2>/dev/null'
   local p = io.popen(find_command)
 
   if not p then
