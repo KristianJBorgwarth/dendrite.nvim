@@ -27,6 +27,11 @@ function M.setup(opts)
     "force",
     vim.deepcopy(defaults),
     opts)
+
+  M.options.vault = vim.fn.expand(M.options.vault)
+  M.options.templates_dir = vim.fn.expand(M.options.templates_dir)
+  M.options.daily_notes.dir = vim.fn.expand(M.options.daily_notes.dir)
+
 end
 
 return M
