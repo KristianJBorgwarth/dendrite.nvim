@@ -31,6 +31,13 @@ function M.new_note(template_name, root_dir, fm_vars)
 
   local display_dirs = utilities.format_dirs_to_display(dirs, vault_root)
 
+  if #display_dirs == 0 then
+    local selected_full_dir = vault_root .. "/" .. root_dir
+    local path = note.create_note(title, template, selected_full_dir, {})
+    vim.cmd.edit(path)
+    return
+  end
+
   ui.selector(display_dirs, function(selected_relative)
     local selected_full_dir = vault_root .. "/" .. selected_relative
     local path = note.create_note(title, template, selected_full_dir, {})
