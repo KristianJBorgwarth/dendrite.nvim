@@ -2,14 +2,21 @@ local M = {}
 
 --- Render a template string by replacing placeholders
 ---@param template string the template file content as a string
-function M._render_template(template, title)
+---@param vars table a collection of variables for template rendering
+function M._render_template(template, vars)
   return (template:gsub("{{(.-)}}", function(key)
+    -- Built-in variables
     if key == "date" then
       return os.date("%Y-%m-%d")
     end
-    if key == "title" then
-      return title
+
+    -- Fallback to user-provided variables
+    local value = vars[key]
+    if value ~= nil then
+      return tostring(value)
     end
+
+    error("Missing value for template variable: " .. key)
   end))
 end
 
@@ -48,7 +55,13 @@ end
 ---@return boolean created true if the note was created, false if it already existed
 function M.create_note(title, template, path, vars)
   M._validate_note_params(title, template, path, vars)
-  local note_content = M._render_template(template, title)
+
+  -- Ensure built-in variables are available in the template variables table
+  if vars.title == nil then
+    vars.title = title
+  end
+
+  local note_content = M._render_template(template, vars)
 
   local file_name = M._slugify(title)
   local file_path = path .. "/" .. file_name .. ".md"
