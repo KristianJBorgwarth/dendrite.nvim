@@ -49,10 +49,10 @@ function M.daily_note()
 
   local template = vault.read_file(template_path)
 
-  local path = note.create_not(
+  local path = note.create_note(
     title,
     template,
-    config.options.daily_notes.dir,
+    config.options.vault .. "/" .. config.options.daily_notes.dir,
     {})
 
   vim.cmd.edit(path)
