@@ -6,12 +6,17 @@ local vault = require("dendrite.core.vault")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
 
-function M.new_note(template_name, root_dir)
+--- Create a new note from a template, prompting the user for the note title and target directory.
+--- @param template_name string the name of the template to use (without .md extension)
+--- @param root_dir string the root directory within the vault where the note should be created (relative to the vault root)
+--- @param fm_vars table a collection of variables for template rendering, where keys are variable names and values are their replacements
+function M.new_note(template_name, root_dir, fm_vars)
   local vault_root = config.options.vault
   local full_root = vault_root .. "/" .. root_dir
 
   local dirs = vault.list_directories(full_root, 5)
 
+  --- move template handling into core instead of here
   local template_path =
       vim.fn.expand(config.options.templates_dir) .. "/" .. template_name .. ".md"
 
@@ -28,7 +33,7 @@ function M.new_note(template_name, root_dir)
 
   ui.selector(display_dirs, function(selected_relative)
     local selected_full_dir = vault_root .. "/" .. selected_relative
-    local path, wasCreated = note.create_note(title, template, selected_full_dir, {})
+    local path = note.create_note(title, template, selected_full_dir, {})
     vim.cmd.edit(path)
   end)
 end

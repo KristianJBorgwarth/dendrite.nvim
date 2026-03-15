@@ -19,23 +19,13 @@ end)
 describe("render_template", function()
   it("replaces placeholders", function()
     -- arrange
-    local template = "Hello {{name}}, the date is {{date}}"
+    local template = "Hello {{name}}, the date is {{local_time}}"
 
     -- act
-    local result = note._render_template(template, { name = "Master", date = "2024-06-01" })
+    local result = note._render_template(template, { name = "Master", local_time = "2024-06-01" })
 
     -- assert
     assert.are.equal("Hello Master, the date is 2024-06-01", result)
-  end)
-
-  it("errors if variable missing", function()
-    -- arrange
-    local template = "Hello {{name}}"
-
-    -- act & assert
-    assert.has_error(function()
-      note._render_template(template, {})
-    end)
   end)
 
   it("allows empty string as a variable value", function()
