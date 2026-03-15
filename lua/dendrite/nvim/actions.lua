@@ -38,4 +38,18 @@ function M.new_note(template_name, root_dir, fm_vars)
   end)
 end
 
+
+function M.daily_note(root_dir)
+  local title = os.date("%Y-%m-%d")
+  local template_name = config.options.daily_notes.template_name
+  local template_path = vim.fn.expand(config.options.templates_dir) .. "/" .. template_name .. ".md"
+
+  if not vault.file_exists(template_path) then
+    error("Daily note template not found: " .. template_path)
+  end
+
+  local template = vault.read_file(template_path)
+
+end
+
 return M
