@@ -15,8 +15,6 @@ function M._render_template(template, vars)
     if value ~= nil then
       return tostring(value)
     end
-
-    error("Missing value for template variable: " .. key)
   end))
 end
 
