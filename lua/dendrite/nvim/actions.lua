@@ -38,8 +38,6 @@ function M.new_note(template_name, root_dir, fm_vars)
   end)
 end
 
---- Create a daily note based on the configured template and open it in the editor.
---- The daily note will be named using the current date in YYYY-MM-DD format and will be created in the directory specified by `config.options.daily_notes.dir` within the vault. 
 function M.daily_note()
   local title = os.date("%Y-%m-%d")
   local template_name = config.options.daily_notes.template_name
@@ -60,11 +58,18 @@ function M.daily_note()
   vim.cmd.edit(path)
 end
 
-function M.new_sratch_note()
+function M.new_scratch_note()
   local title = ui.input("Enter Scratch Note Title:")
   if not title or title == "" then return end
 
-  local template = ""
+  local template_name = config.options.scratch_notes.template_name
+  local template_path = vim.fn.expand(config.options.templates_dir) .. "/" .. template_name .. ".md"
+
+  if not vault.file_exists(template_path) then
+    error("Scratch note template not found: " .. template_path)
+  end
+
+  local template = vault.read_file(template_path)
 
   local path = note.create_note(
     title,

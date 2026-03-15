@@ -15,4 +15,8 @@ function M.daily_note()
   actions.daily_note()
 end
 
+function M.scratch_note()
+  actions.new_scratch_note()
+end
+
 return M
