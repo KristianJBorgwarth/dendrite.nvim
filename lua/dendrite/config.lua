@@ -3,6 +3,10 @@ local M = {}
 local defaults = {
   vault = "~/dendrite-vault",
   templates_dir = "~/dendrite-vault/.templates",
+  scratch_notes = {
+    dir = "~/dendrite-vault/scratches",
+    template_name = "scratch",
+  },
   daily_notes = {
     dir = "~/dendrite-vault/daily",
     filename_format = "%Y-%m-%d.md",
@@ -31,7 +35,6 @@ function M.setup(opts)
   M.options.vault = vim.fn.expand(M.options.vault)
   M.options.templates_dir = vim.fn.expand(M.options.templates_dir)
   M.options.daily_notes.dir = vim.fn.expand(M.options.daily_notes.dir)
-
 end
 
 return M

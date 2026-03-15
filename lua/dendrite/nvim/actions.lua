@@ -58,4 +58,26 @@ function M.daily_note()
   vim.cmd.edit(path)
 end
 
+function M.new_scratch_note()
+  local title = ui.input("Enter Scratch Note Title:")
+  if not title or title == "" then return end
+
+  local template_name = config.options.scratch_notes.template_name
+  local template_path = vim.fn.expand(config.options.templates_dir) .. "/" .. template_name .. ".md"
+
+  if not vault.file_exists(template_path) then
+    error("Scratch note template not found: " .. template_path)
+  end
+
+  local template = vault.read_file(template_path)
+
+  local path = note.create_note(
+    title,
+    template,
+    config.options.vault .. "/" .. config.options.scratch_notes.dir,
+    {})
+
+  vim.cmd.edit(path)
+end
+
 return M
