@@ -38,8 +38,7 @@ function M.new_note(template_name, root_dir, fm_vars)
   end)
 end
 
-
-function M.daily_note(root_dir)
+function M.daily_note()
   local title = os.date("%Y-%m-%d")
   local template_name = config.options.daily_notes.template_name
   local template_path = vim.fn.expand(config.options.templates_dir) .. "/" .. template_name .. ".md"
@@ -50,6 +49,13 @@ function M.daily_note(root_dir)
 
   local template = vault.read_file(template_path)
 
+  local path = note.create_not(
+    title,
+    template,
+    config.options.daily_notes.dir,
+    {})
+
+  vim.cmd.edit(path)
 end
 
 return M
