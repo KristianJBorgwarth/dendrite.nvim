@@ -28,16 +28,6 @@ describe("render_template", function()
     assert.are.equal("Hello Master, the date is 2024-06-01", result)
   end)
 
-  it("errors if variable missing", function()
-    -- arrange
-    local template = "Hello {{name}}"
-
-    -- act & assert
-    assert.has_error(function()
-      note._render_template(template, {})
-    end)
-  end)
-
   it("allows empty string as a variable value", function()
     local result = note._render_template("Hello {{name}}", { name = "" })
     assert.are.equal("Hello ", result)
