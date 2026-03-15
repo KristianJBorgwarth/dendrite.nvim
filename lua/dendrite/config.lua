@@ -6,6 +6,7 @@ local defaults = {
   daily_notes = {
     dir = "~/dendrite-vault/daily",
     filename_format = "%Y-%m-%d.md",
+    template_name = "daily",
   },
 }
 

@@ -4,6 +4,7 @@ local M = {}
 ---@param template string the template file content as a string
 ---@param vars table a collection of variables for template rendering
 function M._render_template(template, vars)
+  if(not template) then return "" end
   return (template:gsub("{{(.-)}}", function(key)
     -- Built-in variables
     if key == "date" then
