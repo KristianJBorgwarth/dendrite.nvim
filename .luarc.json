@@ -11,8 +11,7 @@
       "setup",
       "teardown",
       "assert",
-            "note",
-            "default"
+            "note"
     ]
   },
     "diagnostics.disable": [
