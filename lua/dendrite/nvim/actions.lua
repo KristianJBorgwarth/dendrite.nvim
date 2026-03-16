@@ -14,7 +14,7 @@ function M.new_note(template_name, root_dir, fm_vars)
 
   local template_path = utilities.get_template_path(template_name)
 
- local title = ui.input("Enter Note Title:")
+  local title = ui.input("Enter Note Title:")
   if not title or title == "" then return end
 
   local display_dirs = utilities.format_dirs_to_display(dirs, vault_root)
