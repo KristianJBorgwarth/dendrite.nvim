@@ -74,6 +74,21 @@ describe("create_note", function()
     assert.are.equal("This is the content of the note.", content)
   end)
 
+  it("creates an empty note", function()
+    -- arrange
+    local expected_path = temp_dir .. "/empty-note.md"
+
+    -- act
+    local actual_path, created = note.create_note("Empty Note", "", temp_dir, {})
+
+    -- assert
+    assert.is_not_nil(actual_path)
+    assert.is_true(expected_path == actual_path)
+    assert.is_true(created)
+    local content = spec_utils.read_file(actual_path)
+    assert.are.equal("", content)
+  end)
+
   it("creates a note with vars", function()
     -- arrange
     local expected_path = temp_dir .. "/my-var-note.md"

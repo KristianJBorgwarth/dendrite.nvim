@@ -46,7 +46,7 @@ end
 function M.read_file(path)
   local file = io.open(path, "r")
   if not file then
-    error("Could not read file: " .. path)
+    return nil, "Could not read file at: " .. path
   end
   local content = file:read("*a")
   file:close()
