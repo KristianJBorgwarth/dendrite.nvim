@@ -12,7 +12,7 @@ function M.new_note(template_name, root_dir, fm_vars)
 
   local dirs = vault.list_directories(full_root, 5)
 
-  local template_path = utilities.get_template_path(template_name);
+  local template_path = utilities.get_template_path(template_name)
 
   local title = ui.input("Enter Note Title:")
   if not title or title == "" then return end

@@ -20,6 +20,4 @@ function M.get_template_path(template_name)
   return templates_dir .. "/" .. template_name .. ".md"
 end
 
-
-
 return M
