@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch, need-check-nil
-local search = require("dendrite.core.search")
+local search = require("lua.dendrite.core.search")
 local spec_utils = require("spec.spec_utils")
 
 local function write_note(path, content)
