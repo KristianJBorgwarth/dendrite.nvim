@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch, need-check-nil
-local note = require("lua.dendrite.core.note")
+local note = require("dendrite.core.note")
 local spec_utils = require("spec.spec_utils")
 
 describe("slugify", function()

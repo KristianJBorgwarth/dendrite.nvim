@@ -1,4 +1,4 @@
-local frontmatter = require("lua.dendrite.core.frontmatter")
+local frontmatter = require("dendrite.core.frontmatter")
 
 describe("frontmatter.parse", function()
   it("returns nil and full content when no frontmatter present", function()
