@@ -11,11 +11,8 @@
       "setup",
       "teardown",
       "assert",
-            "note"
+      "note"
     ]
   },
-    "diagnostics.disable": [
-        "need-check-nil",
-        "param-type-mismatch"
-    ]
+  "diagnostics.disable": ["need-check-nil", "param-type-mismatch"]
 }
