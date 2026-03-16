@@ -19,4 +19,8 @@ function M.scratch_note()
   actions.new_scratch_note()
 end
 
+function M.search_frontmatter(keys)
+  actions.search_frontmatter(keys)
+end
+
 return M
