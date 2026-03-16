@@ -5,6 +5,7 @@ local config = require("dendrite.config")
 local vault = require("dendrite.core.vault")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
+local telescope = require("telescope.builtin")
 
 function M.new_note(template_name, root_dir, fm_vars)
   local vault_root = config.options.vault
@@ -59,6 +60,11 @@ function M.new_scratch_note()
     {})
 
   vim.cmd.edit(path)
+end
+
+function M.search_frontmatter(keys)
+  local vault_root = config.options.vault
+  ui.search_frontmatter(keys, vault_root)
 end
 
 return M
