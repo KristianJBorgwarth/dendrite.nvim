@@ -1,4 +1,5 @@
 local M = {}
+local vault = require("dendrite.core.vault")
 
 --- Render a template string by replacing placeholders
 ---@param template string the template file content as a string
@@ -47,18 +48,20 @@ end
 
 --- Create a new note by rendering a template with provided variables and saving it to the specified path.
 ---@param title string the title of the note, used to generate the file name
----@param template string the template content as a string, used to generate the note content
+---@param template_path string the template content as a string, used to generate the note content
 ---@param path string the directory path where the note will be created
 ---@param vars table a collection of variables for template rendering, where keys are variable names and values are their replacements
 ---@return string the file path of the created note
 ---@return boolean created true if the note was created, false if it already existed
-function M.create_note(title, template, path, vars)
-  M._validate_note_params(title, template, path, vars)
+function M.create_note(title, template_path, path, vars)
+  M._validate_note_params(title, template_path, path, vars)
 
   -- Ensure built-in variables are available in the template variables table
   if vars.title == nil then
     vars.title = title
   end
+
+  local template = vault.read_file(template_path)
 
   local note_content = M._render_template(template, vars)
 
