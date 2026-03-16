@@ -5,7 +5,6 @@ local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
-local previewers = require("telescope.previewers")
 local make_entry = require("telescope.make_entry")
 
 function M.selector(dirs, on_select)
@@ -44,8 +43,9 @@ function M.search_frontmatter(keys, vault_root)
         "--column",
         "--glob", "*.md",
         "^(" .. key_pattern .. "):.*" .. prompt,
-        vault_root,
+        vault_root
       }
+
     end, make_entry.gen_from_vimgrep({}), 100),
 
     previewer = conf.grep_previewer({}),

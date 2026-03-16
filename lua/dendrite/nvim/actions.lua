@@ -5,7 +5,6 @@ local config = require("dendrite.config")
 local vault = require("dendrite.core.vault")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
-local telescope = require("telescope.builtin")
 
 function M.new_note(template_name, root_dir, fm_vars)
   local vault_root = config.options.vault
@@ -15,7 +14,7 @@ function M.new_note(template_name, root_dir, fm_vars)
 
   local template_path = utilities.get_template_path(template_name)
 
-  local title = ui.input("Enter Note Title:")
+ local title = ui.input("Enter Note Title:")
   if not title or title == "" then return end
 
   local display_dirs = utilities.format_dirs_to_display(dirs, vault_root)
@@ -63,8 +62,7 @@ function M.new_scratch_note()
 end
 
 function M.search_frontmatter(keys)
-  local vault_root = config.options.vault
-  ui.search_frontmatter(keys, vault_root)
+  ui.search_frontmatter(keys, config.options.vault)
 end
 
 return M
