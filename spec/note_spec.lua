@@ -61,9 +61,10 @@ describe("create_note", function()
   it("creates a note with empty vars", function()
     -- arrange
     local expected_path = temp_dir .. "/my-note.md"
+    local file_path = spec_utils.write_tmp_file("test", "This is the content of the note.")
 
     -- act
-    local actual_path, created = note.create_note("My Note", "This is the content of the note.", temp_dir, {})
+    local actual_path, created = note.create_note("My Note", file_path, temp_dir, {})
 
     -- assert
     assert.is_not_nil(actual_path)
@@ -77,8 +78,10 @@ describe("create_note", function()
     -- arrange
     local expected_path = temp_dir .. "/my-var-note.md"
 
+    local file_path = spec_utils.write_tmp_file("template", "Hello {{name}}, today is {{date}}!")
+
     -- act
-    local actual_path, created = note.create_note("My Var??? Note", "Hello {{name}}, today is {{date}}!", temp_dir, { name = "World", date = os.date("%Y-%m-%d") })
+    local actual_path, created = note.create_note("My Var??? Note", file_path, temp_dir, { name = "World", date = os.date("%Y-%m-%d") })
 
     -- assert
     assert.is_not_nil(actual_path)
@@ -95,8 +98,10 @@ describe("create_note", function()
     file:write("Existing content")
     file:close()
 
+    local file_path = spec_utils.write_tmp_file("template", "New content")
+
     -- act
-    local actual_path, created = note.create_note("Existing Note", "New content", temp_dir, {})
+    local actual_path, created = note.create_note("Existing Note", file_path, temp_dir, {})
 
     -- assert
     assert.is_not_nil(actual_path)
