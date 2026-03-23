@@ -1,122 +1,104 @@
 local M = {}
 
-local proc = nil
-local next_id = 1
-local buffer = ""
-local expected_length = nil
-local pending = {}
+local state = {
+  proc = nil,
+  next_id = 1,
+  buffer = "",
+  pending = {},
+}
 
+--- Handle a single line of JSON-RPC message, decoding it and dispatching to the appropriate callback if it's a response.
+local function handle_rpc_message(line)
+  local ok, decoded = pcall(vim.json.decode, line)
+  if not ok then
+    vim.notify("Invalid JSON: " .. line, vim.log.levels.ERROR)
+    return
+  end
 
+  local id = decoded.id
+  if id and state.pending[id] then
+    state.pending[id](decoded)
+    state.pending[id] = nil
+  end
+end
+
+--- Handle stdout data from the daemon process, buffering until we get complete lines.
+--- @param _ number the exit code (ignored)
+--- @param data string the stdout data chunk
+local function on_stdout(_, data)
+  if not data then return end
+
+  state.buffer = state.buffer .. data
+
+  while true do
+    local line_end = state.buffer:find("\n", 1, true)
+    if not line_end then break end
+
+    local line = state.buffer:sub(1, line_end - 1)
+    state.buffer = state.buffer:sub(line_end + 1)
+
+    handle_rpc_message(line)
+  end
+end
+
+--- Handle stderr data from the daemon process, logging it as an error.
+--- @param _ number the exit code (ignored)
+--- @param data string the stderr data chunk
+local function on_stderr(_, data)
+  if data then
+    vim.schedule(function()
+      vim.notify(data, vim.log.levels.ERROR)
+    end)
+  end
+end
+
+--- Start the daemon process with the given command, setting up handlers for stdout and stderr.
+--- @param cmd table the command to start the daemon, as a list of strings (e.g. { "/path/to/daemon", "arg1", "arg2" })
 function M.start(cmd)
-  if proc then
-    vim.notify("Dendrite daemon is already running", vim.log.levels.WARN)
+  if state.proc then
+    vim.notify("Daemon already running", vim.log.levels.WARN)
     return
   end
 
-  proc = vim.system(
-    cmd,
-    {
-      stdin = true,
-      stdout = function(_, data)
-        if data then
-          M._on_stdout(data)
-        end
-      end,
-      stderr = function(_, data)
-        if data then
-          vim.notify(data, vim.log.levels.ERROR)
-        end
-      end,
-    }
-  )
+  state.proc = vim.system(cmd, {
+    stdin = true,
+    stdout = on_stdout,
+    stderr = on_stderr,
+  })
 end
 
+--- Stop the daemon process if it's running, killing it and clearing state.
 function M.stop()
-  if proc then
-    proc:kill()
-    proc = nil
-  end
+  if not state.proc then return end
+
+  state.proc:kill(15)
+  state.proc = nil
+  state.pending = {}
+  state.buffer = ""
 end
 
+--- Send a JSON-RPC request to the daemon process, encoding the method and params, and registering a callback for the response.
+--- @param method string the JSON-RPC method name to call
+--- @param params table the parameters to include in the request, as a Lua table (will be encoded to JSON)
+--- @param callback function the function to call with the decoded response when it arrives, should accept a single argument which is the decoded JSON response as a Lua table
 function M.request(method, params, callback)
-  if not proc then
-    vim.notify("Dendrite daemon is not running", vim.log.levels.ERROR)
-    return
+  if not state.proc then
+    error("daemon not started")
   end
 
-  local id = next_id
-  next_id = next_id + 1
+  local id = state.next_id
+  state.next_id = id + 1
 
-  if callback then
-    pending[id] = callback
-  end
+  state.pending[id] = callback
 
   local payload = vim.json.encode({
     jsonrpc = "2.0",
     id = id,
     method = method,
-    params = params,
+    params = params or {},
   })
 
-  local msg = string.format("Content-Length: %d\r\n\r\n%s", #payload, payload)
-
-  if not proc or proc:is_closing() then
-    vim.notify("Dendrite daemon is not running", vim.log.levels.ERROR)
-    return
-  end
-
-  proc:write(msg)
-
-  return id
+  state.proc:write(payload .. "\n")
 end
 
-function M._on_stdout(chunk)
-  buffer = buffer .. chunk
-
-  while true do
-    if not expected_length then
-      local header_end = buffer:find("\r\n\r\n", 1, true)
-      if not header_end then return end
-
-      local header = buffer:sub(1, header_end)
-      local len = header:match("Content%-Length:%s*(%d+)")
-      if not len then
-        vim.notify("Invalid response header", vim.log.levels.ERROR)
-        return
-      end
-
-      expected_length = tonumber(len)
-      buffer = buffer:sub(header_end + 4)
-    end
-
-    if #buffer < expected_length then return end
-
-    local body = buffer:sub(1, expected_length)
-    buffer = buffer:sub(expected_length + 1)
-    expected_length = nil
-
-    local ok, msg = pcall(vim.json.decode, body)
-    if not ok then
-      vim.notify("Failed to decode response", vim.log.levels.ERROR)
-      return
-    end
-
-    M._handle_message(msg)
-  end
-end
-
-function M._handle_message(msg)
-  -- no notifications yet
-  if not msg.id then
-    vim.notify("Received message without id", vim.log.levels.WARN)
-    return
-  end
-
-  local callback = pending[msg.id]
-  if not callback then return nil end
-
-  pending[msg.id] = nil
-  callback(msg.result)
-end
-
-return M;
+return M
