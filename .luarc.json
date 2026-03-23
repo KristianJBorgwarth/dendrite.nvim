@@ -11,7 +11,8 @@
       "setup",
       "teardown",
       "assert",
-      "note"
+      "note",
+            "root"
     ]
   },
   "diagnostics.disable": ["need-check-nil", "param-type-mismatch"]
