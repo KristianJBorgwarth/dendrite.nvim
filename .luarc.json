@@ -12,7 +12,8 @@
       "teardown",
       "assert",
       "note",
-            "root"
+            "root",
+            "display_dirs"
     ]
   },
   "diagnostics.disable": ["need-check-nil", "param-type-mismatch"]
