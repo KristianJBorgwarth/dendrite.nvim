@@ -3,6 +3,7 @@ local M = {}
 local config = require("dendrite.config")
 local actions = require("dendrite.nvim.actions")
 local daemon = require("dendrite.daemon.daemon")
+local daemon_commands = require("dendrite.daemon.commands")
 
 function M.setup(options)
 	config.setup(options)
@@ -12,17 +13,7 @@ function M.setup(options)
 			daemon.stop()
 		end,
 	})
-	daemon.request("initialize", {
-		vaultPath = config.options.vault,
-	}, function(response)
-		vim.schedule(function()
-			if response.error then
-				vim.notify("Failed to initialize Dendrite Daemon: " .. response.error.message, vim.log.levels.ERROR)
-			else
-				vim.notify("Dendrite Daemon initialized successfully", vim.log.levels.INFO)
-			end
-		end)
-	end)
+  daemon_commands.init_vault(config.options.vault)
 end
 
 function M.new_note(template_name, root_dir)

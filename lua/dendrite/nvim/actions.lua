@@ -31,10 +31,6 @@ function M.new_scratch_note()
 	vim.cmd.edit(path)
 end
 
-function M.search_frontmatter(keys)
-	ui.search_frontmatter(keys, config.options.vault)
-end
-
 function M.create_note(template_name, root_dir)
 	local vault_root = config.options.vault
 	local full_root = vault_root .. "/" .. root_dir
