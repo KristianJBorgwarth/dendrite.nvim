@@ -7,7 +7,6 @@ local state = {
   pending = {},
 }
 
---- Handle a single line of JSON-RPC message, decoding it and dispatching to the appropriate callback if it's a response.
 local function handle_rpc_message(line)
   local ok, decoded = pcall(vim.json.decode, line)
   if not ok then
@@ -22,9 +21,6 @@ local function handle_rpc_message(line)
   end
 end
 
---- Handle stdout data from the daemon process, buffering until we get complete lines.
---- @param _ number the exit code (ignored)
---- @param data string the stdout data chunk
 local function on_stdout(_, data)
   if not data then return end
 
@@ -41,9 +37,6 @@ local function on_stdout(_, data)
   end
 end
 
---- Handle stderr data from the daemon process, logging it as an error.
---- @param _ number the exit code (ignored)
---- @param data string the stderr data chunk
 local function on_stderr(_, data)
   if data then
     vim.schedule(function()
@@ -52,8 +45,6 @@ local function on_stderr(_, data)
   end
 end
 
---- Start the daemon process with the given command, setting up handlers for stdout and stderr.
---- @param cmd table the command to start the daemon, as a list of strings (e.g. { "/path/to/daemon", "arg1", "arg2" })
 function M.start(cmd)
   if state.proc then
     vim.notify("Daemon already running", vim.log.levels.WARN)
@@ -67,7 +58,6 @@ function M.start(cmd)
   })
 end
 
---- Stop the daemon process if it's running, killing it and clearing state.
 function M.stop()
   if not state.proc then return end
 
@@ -77,10 +67,6 @@ function M.stop()
   state.buffer = ""
 end
 
---- Send a JSON-RPC request to the daemon process, encoding the method and params, and registering a callback for the response.
---- @param method string the JSON-RPC method name to call
---- @param params table the parameters to include in the request, as a Lua table (will be encoded to JSON)
---- @param callback function the function to call with the decoded response when it arrives, should accept a single argument which is the decoded JSON response as a Lua table
 function M.request(method, params, callback)
   if not state.proc then
     error("daemon not started")
@@ -100,5 +86,3 @@ function M.request(method, params, callback)
 
   state.proc:write(payload .. "\n")
 end
-
-return M
