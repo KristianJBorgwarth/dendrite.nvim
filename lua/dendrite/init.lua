@@ -26,7 +26,7 @@ function M.setup(options)
 end
 
 function M.new_note(template_name, root_dir)
-	actions.daemon_create_note(template_name, root_dir)
+	actions.create_note(template_name, root_dir)
 end
 
 function M.daily_note()
