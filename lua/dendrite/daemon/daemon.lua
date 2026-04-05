@@ -86,3 +86,5 @@ function M.request(method, params, callback)
 
   state.proc:write(payload .. "\n")
 end
+
+return M

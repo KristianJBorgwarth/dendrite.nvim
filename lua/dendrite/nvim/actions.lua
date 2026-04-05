@@ -25,10 +25,7 @@ function M.new_scratch_note()
 
 	local template_path = utilities.get_template_path(config.options.scratch_notes.template_name)
 
-	local path =
-		note.create_note(title, template_path, config.options.vault .. "/" .. config.options.scratch_notes.dir, {})
-
-	vim.cmd.edit(path)
+  daemon_commands.create(title, template_path, config.options.vault .. config.options.scratch_notes.dir .. "/" .. note._slugify(title) .. ".md")
 end
 
 function M.create_note(template_name, root_dir)

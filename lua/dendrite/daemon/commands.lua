@@ -20,12 +20,12 @@ end
 
 --- Create a new note with the given title, template, and path.
 --- @param title string the title of the note to create
---- @param template_name string the name of the template to use for the note
+--- @param template_path string the name of the template to use for the note
 --- @param path string the full path where the note should be created (including the filename)
-function M.create(title, template_name, path)
+function M.create(title, template_path, path)
   daemon.request("create_note", {
     title = title,
-    templatePath = template_name,
+    templatePath = template_path,
     path = path,
   }, function(response)
     vim.schedule(function()
