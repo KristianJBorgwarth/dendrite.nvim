@@ -11,10 +11,11 @@ function M.daily_note()
 	local title = os.date("%Y-%m-%d")
 	local template_path = utilities.get_template_path(config.options.daily_notes.template_name)
 
-	local path =
-		note.create_note(title, template_path, config.options.vault .. "/" .. config.options.daily_notes.dir, {})
-
-	vim.cmd.edit(path)
+	daemon_commands.create(
+		title,
+		template_path,
+		config.options.vault .. config.options.daily_notes.dir .. "/" .. title .. ".md"
+	)
 end
 
 function M.new_scratch_note()
@@ -25,7 +26,11 @@ function M.new_scratch_note()
 
 	local template_path = utilities.get_template_path(config.options.scratch_notes.template_name)
 
-  daemon_commands.create(title, template_path, config.options.vault .. config.options.scratch_notes.dir .. "/" .. note._slugify(title) .. ".md")
+	daemon_commands.create(
+		title,
+		template_path,
+		config.options.vault .. config.options.scratch_notes.dir .. "/" .. note._slugify(title) .. ".md"
+	)
 end
 
 function M.create_note(template_name, root_dir)
@@ -33,7 +38,7 @@ function M.create_note(template_name, root_dir)
 	local full_root = vault_root .. "/" .. root_dir
 
 	local dirs = vault.list_directories(full_root, 5)
-  local template_path = utilities.get_template_path(template_name)
+	local template_path = utilities.get_template_path(template_name)
 
 	local title = ui.input("Enter Note Title:")
 	if not title or title == "" then
