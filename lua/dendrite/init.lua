@@ -2,8 +2,8 @@ local M = {}
 
 local config = require("dendrite.config")
 local actions = require("dendrite.nvim.actions")
-local daemon = require("dendrite.daemon.daemon")
-local daemon_commands = require("dendrite.daemon.commands")
+local daemon = require("dendrite.core.daemon")
+local daemon_commands = require("dendrite.core.daemon_commands")
 
 function M.setup(options)
 	config.setup(options)

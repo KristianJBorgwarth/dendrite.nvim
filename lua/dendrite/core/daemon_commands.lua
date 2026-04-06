@@ -1,5 +1,5 @@
 local M = {}
-local daemon = require("dendrite.daemon.daemon")
+local daemon = require("dendrite.core.daemon")
 
 --- Start the Dendrite daemon process with a vault path
 --- @param path string the full path to the vault directory to initialize

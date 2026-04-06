@@ -5,7 +5,7 @@ local config = require("dendrite.config")
 local vault = require("dendrite.core.vault")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
-local daemon_commands = require("dendrite.daemon.commands")
+local daemon_commands = require("dendrite.core.daemon_commands")
 
 function M.daily_note()
 	local title = os.date("%Y-%m-%d")
