@@ -13,7 +13,7 @@ function M.setup(options)
 			daemon.stop()
 		end,
 	})
-  daemon_commands.init_vault(config.options.vault)
+  daemon_commands.init_vault(config.options.vault, config.options.template_dir)
 end
 
 function M.new_note(template_name, root_dir)
