@@ -39,4 +39,19 @@ function M.create(title, template_name, dir)
 	end)
 end
 
+function M.completion_link(query, callback)
+  daemon.request("completion/link", {
+    query = query,
+  }, function(response)
+    vim.schedule(function()
+      if response.error then
+        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+        callback({})
+      else
+        callback(response.result)
+      end
+    end)
+  end)
+end
+
 return M
