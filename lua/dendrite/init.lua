@@ -4,6 +4,7 @@ local config = require("dendrite.config")
 local actions = require("dendrite.nvim.actions")
 local daemon = require("dendrite.core.daemon")
 local daemon_commands = require("dendrite.core.daemon_commands")
+local auto_commands = require("dendrite.nvim.auto_commands")
 
 function M.setup(options)
 	config.setup(options)
@@ -31,6 +32,8 @@ function M.setup(options)
 	else
 		vim.notify("Dendrite: nvim-cmp not found, completion will not work", vim.log.levels.WARN)
 	end
+
+	auto_commands.setup()
 end
 
 function M.new_note(template_name, root_dir)
