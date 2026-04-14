@@ -48,4 +48,14 @@ function M.create_note(template_name, root_dir)
 	end)
 end
 
+function M.goto_link()
+	local target = utilities.wikilink_target_under_cursor()
+	if not target then
+		vim.notify("No wikilink found under cursor", vim.log.levels.WARN)
+		return
+	end
+
+	daemon_commands.goto_note(target)
+end
+
 return M

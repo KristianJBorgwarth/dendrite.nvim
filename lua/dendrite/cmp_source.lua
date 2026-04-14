@@ -30,10 +30,10 @@ function M:complete(params, callback)
 		local items = {}
 		for _, note in ipairs(results or {}) do
 			table.insert(items, {
-				label = note.title,
+				label = note.display,
 				insertText = note.slug,
 				kind = require("cmp").lsp.CompletionItemKind.Reference,
-				filterText = note.title .. " " .. note.slug,
+				filterText = note.display .. " " .. note.slug,
 			})
 		end
 		callback({ items = items, isIncomplete = true })

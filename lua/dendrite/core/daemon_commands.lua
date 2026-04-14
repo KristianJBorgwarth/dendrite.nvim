@@ -66,4 +66,18 @@ function M.save_note(path)
 	end)
 end
 
+function M.goto_note(link)
+  daemon.request("note/goto", {
+    link = link,
+  }, function(response)
+    vim.schedule(function()
+      if response.error then
+        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+      else
+        vim.cmd.edit(response.result.path)
+      end
+    end)
+  end)
+end
+
 return M

@@ -52,4 +52,8 @@ function M.search_frontmatter(keys)
 	actions.search_frontmatter(keys)
 end
 
+function M.goto_link()
+  actions.goto_link()
+end
+
 return M
