@@ -4,8 +4,9 @@ local daemon = require("dendrite.core.daemon")
 --- Start the Dendrite daemon process with a vault path
 --- @param path string the full path to the vault directory to initialize
 --- @param templates string directory containing note templates
-function M.init_vault(path, templates)
+function M.init_vault(name, path, templates)
 	daemon.request("vault/init", {
+    vaultName = name,
 		vaultPath = path,
 		templateDirectory = templates,
 	}, function(response)

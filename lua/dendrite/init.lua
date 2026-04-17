@@ -14,7 +14,7 @@ function M.setup(options)
 			daemon.stop()
 		end,
 	})
-	daemon_commands.init_vault(config.options.vault, config.options.template_dir)
+	daemon_commands.init_vault(config.options.vault_name, config.options.vault_path, config.options.template_dir)
 
 	local ok, cmp = pcall(require, "cmp")
 	if ok then

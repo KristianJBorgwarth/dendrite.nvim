@@ -2,7 +2,6 @@ local M = {}
 
 local config = require("dendrite.config")
 
---- Formats a list of absolute directory paths to be relative to the display root.
 --- @param dirs table A list of absolute directory paths.
 --- @param display_root string The root directory to which the paths should be made relative.
 --- @return table A list of formatted directory paths relative to the display root.
@@ -20,6 +19,7 @@ function M.get_template_path(template_name)
 	return templates_dir .. "/" .. template_name .. ".md"
 end
 
+--- @return string|nil The link under the cursor, or nil if no link is found.
 function M.link_under_cursor()
 	local line = vim.api.nvim_get_current_line()
 	local col = vim.api.nvim_win_get_cursor(0)[2] + 1

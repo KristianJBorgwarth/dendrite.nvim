@@ -1,6 +1,5 @@
 local M = {}
 
---- List all markdown notes in a vault recursively.
 ---@param vault_root string the root directory of the vault
 ---@return table a list of absolute file paths to .md files
 function M.list_notes(vault_root)
@@ -20,7 +19,6 @@ function M.list_notes(vault_root)
   return results
 end
 
---- List all directories in a vault recursively by a specified depth.
 ---@param vault_path string the root directory of the vault
 ---@param depth number the maximum depth to search for directories (1 for immediate subdirectories, 2 for subdirectories of subdirectories, etc.)
 ---@return table a list of absolute directory paths
@@ -54,7 +52,6 @@ function M.read_file(path)
 end
 
 
---- Check if a file exists at the given path.
 ---@param path string the file path to check for existence
 ---@return boolean true if a file exists at the given path, false otherwise
 function M.file_exists(path)
