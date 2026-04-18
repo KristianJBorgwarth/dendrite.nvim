@@ -25,7 +25,7 @@ function M.new_scratch_note()
 end
 
 function M.create_note(template_name, root_dir)
-	local vault_root = config.options.vault
+	local vault_root = config.options.vault_path
 	local full_root = vault_root .. "/" .. root_dir
 
 	local dirs = vault.list_directories(full_root, 5)
