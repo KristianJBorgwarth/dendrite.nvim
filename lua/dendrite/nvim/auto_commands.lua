@@ -11,7 +11,7 @@ function M.setup()
 		pattern = "*.md",
 		callback = function(args)
 			local path = vim.api.nvim_buf_get_name(args.buf)
-			local vault_path = config.options.vault
+			local vault_path = config.options.vault_path
 			if not vim.startswith(path, vault_path .. "/") then
 				return
 			end
