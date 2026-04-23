@@ -6,7 +6,7 @@ local daemon = require("dendrite.core.daemon")
 --- @param templates string directory containing note templates
 function M.init_vault(name, path, templates)
 	daemon.request("vault/init", {
-    vaultName = name,
+		vaultName = name,
 		vaultPath = path,
 		templateDirectory = templates,
 	}, function(response)
@@ -76,14 +76,26 @@ function M.goto_note(link)
 				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
 			else
 				if response.result.type == "note" then
-          vim.notify("Opening note: " .. response.result.target, vim.log.levels.INFO)
+					vim.notify("Opening note: " .. response.result.target, vim.log.levels.INFO)
 					vim.cmd.edit(response.result.target)
 				elseif response.result.type == "url" then
-          vim.notify("Opening URL: " .. response.result.target, vim.log.levels.INFO)
+					vim.notify("Opening URL: " .. response.result.target, vim.log.levels.INFO)
 					vim.ui.open(response.result.target)
 				else
 					vim.notify("Daemon error: Unknown link type: " .. response.result.type, vim.log.levels.ERROR)
 				end
+			end
+		end)
+	end)
+end
+
+function M.rebuild_index()
+	daemon.request("vault/rebuild", {}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: Failed to rebuild index: " .. response.error.message, vim.log.levels.ERROR)
+			else
+				vim.notify("Daemon index rebuilt successfully", vim.log.levels.INFO)
 			end
 		end)
 	end)

@@ -5,9 +5,11 @@ local actions = require("dendrite.nvim.actions")
 local daemon = require("dendrite.core.daemon")
 local daemon_commands = require("dendrite.core.daemon_commands")
 local auto_commands = require("dendrite.nvim.auto_commands")
+local commands = require("dendrite.nvim.commands")
 
 function M.setup(options)
 	config.setup(options)
+
 	daemon.start({ "/home/krjb/projects/dendrite.daemon/dendrite" })
 	vim.api.nvim_create_autocmd("VimLeavePre", {
 		callback = function()
@@ -34,6 +36,7 @@ function M.setup(options)
 	end
 
 	auto_commands.setup()
+  commands.setup()
 end
 
 function M.new_note(template_name, root_dir)
