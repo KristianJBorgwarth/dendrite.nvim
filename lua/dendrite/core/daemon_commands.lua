@@ -69,7 +69,6 @@ function M.goto_note(link)
 				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
 			else
 				if response.result.type == "note" then
-					vim.notify("Opening note: " .. response.result.target, vim.log.levels.INFO)
 					vim.cmd.edit(response.result.target)
 				elseif response.result.type == "url" then
 					vim.notify("Opening URL: " .. response.result.target, vim.log.levels.INFO)
@@ -80,6 +79,21 @@ function M.goto_note(link)
 			end
 		end)
 	end)
+end
+
+function M.completion_tag(query, callback)
+  daemon.request("completion/tag", {
+    query = query,
+  }, function(response)
+    vim.schedule(function()
+      if response.error then
+        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+        callback({})
+      else
+        callback(response.result)
+      end
+    end)
+  end)
 end
 
 function M.rebuild_index()
