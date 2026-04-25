@@ -1,9 +1,6 @@
 local M = {}
 local daemon = require("dendrite.core.daemon")
 
---- Start the Dendrite daemon process with a vault path
---- @param path string the full path to the vault directory to initialize
---- @param templates string directory containing note templates
 function M.init_vault(name, path, templates)
 	daemon.request("vault/init", {
 		vaultName = name,
@@ -20,10 +17,6 @@ function M.init_vault(name, path, templates)
 	end)
 end
 
---- Create a new note with the given title, template, and path.
---- @param title string the title of the note to create
---- @param template_name string the name of the template to use for the note
---- @param dir string the directory path where the note should be created
 function M.create(title, template_name, dir)
 	daemon.request("note/create", {
 		title = title,
