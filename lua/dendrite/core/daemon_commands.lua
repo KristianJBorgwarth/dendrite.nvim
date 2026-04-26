@@ -60,6 +60,21 @@ function M.save_note(path)
 	end)
 end
 
+function M.search_notes_by_tag(tag, callback)
+  daemon.request("search/tag", {
+    tag = tag,
+  }, function(response)
+    vim.schedule(function()
+      if response.error then
+        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+        callback({})
+      else
+        callback(response.result)
+      end
+    end)
+  end)
+end
+
 function M.goto_note(link)
 	daemon.request("note/goto", {
 		link = link,
