@@ -5,12 +5,11 @@ local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
-local make_entry = require("telescope.make_entry")
 
-function M.selector(dirs, on_select)
+function M.selector(resource, on_select)
   pickers.new({}, {
-    prompt_title = "Select directory",
-    finder = finders.new_table({ results = dirs }),
+    prompt_title = "select resource",
+    finder = finders.new_table({ results = resource }),
     sorter = conf.generic_sorter({}),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()

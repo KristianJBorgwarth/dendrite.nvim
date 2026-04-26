@@ -105,6 +105,7 @@ function M.get_backlinks(path, callback)
         vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
         callback({})
       else
+        vim.notify("Found " .. #response.result .. " backlinks for this note", vim.log.levels.INFO)
         callback(response.result)
       end
     end)

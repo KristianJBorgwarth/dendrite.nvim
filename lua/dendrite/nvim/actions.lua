@@ -5,6 +5,9 @@ local vault = require("dendrite.core.vault")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
 local daemon_commands = require("dendrite.core.daemon_commands")
+local pickers = require("telescope.pickers")
+local finders = require("telescope.finders")
+local conf = require("telescope.config").values
 
 function M.daily_note()
 	local title = os.date("%Y-%m-%d")
@@ -56,6 +59,40 @@ function M.goto_link()
 	end
 
 	daemon_commands.goto_note(target)
+end
+
+function M.view_backlinks()
+	local current_file = vim.api.nvim_buf_get_name(0)
+	if current_file == "" then
+		vim.notify("No file is currently open", vim.log.levels.WARN)
+	end
+
+	daemon_commands.get_backlinks(current_file, function(backlinks)
+		if #backlinks == 0 then
+			vim.notify("No backlinks found for this note", vim.log.levels.INFO)
+			return
+		end
+		pickers
+			.new({}, {
+				prompt_title = "Backlinks",
+				finder = finders.new_table({
+					results = backlinks,
+					entry_maker = function(bl)
+						return {
+							value = bl,
+							display = bl.slug,
+							ordinal = bl.slug,
+							path = bl.path,
+							lnum = bl.line,
+							col = bl.col,
+						}
+					end,
+				}),
+				sorter = conf.generic_sorter({}),
+				previewer = conf.grep_previewer({}),
+			})
+			:find()
+	end)
 end
 
 return M

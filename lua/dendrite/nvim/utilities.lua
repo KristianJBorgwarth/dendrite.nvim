@@ -14,6 +14,10 @@ function M.format_dirs_to_display(dirs, display_root)
 	return display_dirs
 end
 
+function M.strip_dirs_from_path(path)
+  return path:match("([^/]+)$")
+end
+
 function M.get_template_path(template_name)
 	local templates_dir = vim.fn.expand(config.options.templates_dir)
 	return templates_dir .. "/" .. template_name .. ".md"
