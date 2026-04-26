@@ -61,7 +61,7 @@ function M.save_note(path)
 end
 
 function M.search_notes_by_tag(tag, callback)
-  daemon.request("search/tag", {
+  daemon.request("note/search_by_tag", {
     tag = tag,
   }, function(response)
     vim.schedule(function()
@@ -69,7 +69,7 @@ function M.search_notes_by_tag(tag, callback)
         vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
         callback({})
       else
-        callback(response.result)
+        callback(response.result or {})
       end
     end)
   end)
@@ -97,34 +97,34 @@ function M.goto_note(link)
 end
 
 function M.completion_tag(query, callback)
-  daemon.request("completion/tag", {
-    query = query,
-  }, function(response)
-    vim.schedule(function()
-      if response.error then
-        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
-        callback({})
-      else
-        callback(response.result)
-      end
-    end)
-  end)
+	daemon.request("completion/tag", {
+		query = query,
+	}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				callback({})
+			else
+				callback(response.result)
+			end
+		end)
+	end)
 end
 
 function M.get_backlinks(path, callback)
-  daemon.request("note/backlinks", {
-    path = path,
-  }, function(response)
-    vim.schedule(function()
-      if response.error then
-        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
-        callback({})
-      else
-        vim.notify("Found " .. #response.result .. " backlinks for this note", vim.log.levels.INFO)
-        callback(response.result)
-      end
-    end)
-  end)
+	daemon.request("note/backlinks", {
+		path = path,
+	}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				callback({})
+			else
+				vim.notify("Found " .. #response.result .. " backlinks for this note", vim.log.levels.INFO)
+				callback(response.result)
+			end
+		end)
+	end)
 end
 
 function M.rebuild_index()

@@ -73,4 +73,8 @@ function M.view_backlinks()
 	end)
 end
 
+function M.search_notes_by_tag()
+  ui.search("search by tag", daemon_commands.search_notes_by_tag)
+end
+
 return M

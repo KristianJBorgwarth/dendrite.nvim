@@ -12,6 +12,10 @@ function M.setup()
   vim.api.nvim_create_user_command("DendriteBacklinks", function()
     actions.view_backlinks()
   end, { desc = "View backlinks for the current note" })
+
+  vim.api.nvim_create_user_command("DendriteSearchTags", function()
+    actions.search_notes_by_tag()
+  end, { desc = "Search for notes by tag" })
 end
 
 return M
