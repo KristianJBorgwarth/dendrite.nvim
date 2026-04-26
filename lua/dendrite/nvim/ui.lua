@@ -22,6 +22,27 @@ function M.selector(resource, on_select)
   }):find()
 end
 
+function M.backink_viewer(backlinks)
+  pickers.new({}, {
+    prompt_title = "Backlinks",
+    finder = finders.new_table({
+      results = backlinks,
+      entry_maker = function(bl)
+        return {
+          value = bl,
+          display = bl.slug,
+          ordinal = bl.slug,
+          path = bl.path,
+          lnum = bl.line,
+          col = bl.col,
+        }
+      end,
+    }),
+    sorter = conf.generic_sorter({}),
+    previewer = conf.grep_previewer({}),
+  }):find()
+end
+
 function M.input(prompt)
   local input = vim.fn.input(prompt)
   return input
