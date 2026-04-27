@@ -33,8 +33,8 @@ function M.create(title, template_name, dir)
 	end)
 end
 
-function M.completion_link(query, callback)
-	daemon.request("completion/link", {
+function M.completion_slug(query, callback)
+	daemon.request("completion/slug", {
 		query = query,
 	}, function(response)
 		vim.schedule(function()

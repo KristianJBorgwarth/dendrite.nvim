@@ -20,16 +20,16 @@ end
 function M:complete(params, callback)
   local line = params.context.cursor_before_line
 
-  local link_query = line:match("%[%[([^%]]*)$")
-  if link_query then
-    daemon_commands.completion_link(link_query, function(results)
+  local slug_query = line:match("%[%[([^%]]*)$")
+  if slug_query then
+    daemon_commands.completion_slug(slug_query, function(results)
       local items = {}
-      for _, note in ipairs(results or {}) do
+      for _, note_slug in ipairs(results or {}) do
         table.insert(items, {
-          label = note.display,
-          insertText = note.slug,
+          label = note_slug,
+          insertText = note_slug,
           kind = require("cmp").lsp.CompletionItemKind.Reference,
-          filterText = note.display .. " " .. note.slug,
+          filterText = note_slug,
         })
       end
       callback({ items = items, isIncomplete = true })

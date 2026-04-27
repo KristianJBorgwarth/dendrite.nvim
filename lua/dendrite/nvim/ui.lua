@@ -65,10 +65,12 @@ function M.search(prompt_title, search_fn)
 						value = entry,
 						display = entry.title,
 						ordinal = entry.title,
+						path = entry.path,
 					}
 				end,
 			}),
 			sorter = conf.generic_sorter({}),
+			previewer = conf.file_previewer({}),
 			attach_mappings = function(prompt_bufnr, _)
 				actions.select_default:replace(function()
 					actions.close(prompt_bufnr)
