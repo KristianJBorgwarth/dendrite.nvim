@@ -1,7 +1,7 @@
 local M = {}
 
 local config = require("dendrite.config")
-local vault = require("dendrite.core.vault")
+local vault = require("dendrite.core.utilities")
 local ui = require("dendrite.nvim.ui")
 local utilities = require("dendrite.nvim.utilities")
 local daemon_commands = require("dendrite.core.daemon_commands")

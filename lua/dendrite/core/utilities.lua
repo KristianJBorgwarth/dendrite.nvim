@@ -1,24 +1,5 @@
 local M = {}
 
----@param vault_root string the root directory of the vault
----@return table a list of absolute file paths to .md files
-function M.list_notes(vault_root)
-  assert(type(vault_root) == "string", "vault_root must be a string")
-
-  local results = {}
-  local p = io.popen('find "' .. vault_root .. '" -type f -name "*.md"')
-  if not p then
-    error("Could not list notes in vault: " .. vault_root)
-  end
-
-  for path in p:lines() do
-    table.insert(results, path)
-  end
-  p:close()
-
-  return results
-end
-
 ---@param vault_path string the root directory of the vault
 ---@param depth number the maximum depth to search for directories (1 for immediate subdirectories, 2 for subdirectories of subdirectories, etc.)
 ---@return table a list of absolute directory paths
@@ -50,18 +31,5 @@ function M.read_file(path)
   file:close()
   return content
 end
-
-
----@param path string the file path to check for existence
----@return boolean true if a file exists at the given path, false otherwise
-function M.file_exists(path)
-  local file = io.open(path, "r")
-  if file then
-    file:close()
-    return true
-  end
-  return false
-end
-
 
 return M
