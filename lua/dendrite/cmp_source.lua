@@ -20,7 +20,7 @@ end
 function M:complete(params, callback)
   local line = params.context.cursor_before_line
 
-  local slug_query = line:match("%[%[([^%]]*)$")
+  local slug_query = line:match("%[%[([^%]]+)$")
   if slug_query then
     daemon_commands.completion_slug(slug_query, function(results)
       local items = {}
