@@ -9,34 +9,10 @@ local commands = require("dendrite.nvim.commands")
 
 function M.setup(options)
 	config.setup(options)
-
 	daemon.start({ "/home/krjb/projects/dendrite.daemon/dendrite" })
-	vim.api.nvim_create_autocmd("VimLeavePre", {
-		callback = function()
-			daemon.stop()
-		end,
-	})
 	daemon_commands.init_vault(config.options.vault_name, config.options.vault_path, config.options.template_dir)
-
-	local ok, cmp = pcall(require, "cmp")
-	if ok then
-		cmp.register_source("dendrite", require("dendrite.cmp_source").new())
-
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "markdown",
-			callback = function()
-				local global_sources = vim.deepcopy(require("cmp.config").get().sources or {})
-				cmp.setup.buffer({
-					sources = vim.list_extend({ { name = "dendrite", priority = 150 } }, global_sources),
-				})
-			end,
-		})
-	else
-		vim.notify("Dendrite: nvim-cmp not found, completion will not work", vim.log.levels.WARN)
-	end
-
 	auto_commands.setup()
-  commands.setup()
+	commands.setup()
 end
 
 function M.new_note(template_name, root_dir)
@@ -56,7 +32,7 @@ function M.search_frontmatter(keys)
 end
 
 function M.goto_link()
-  actions.goto_link()
+	actions.goto_link()
 end
 
 return M
