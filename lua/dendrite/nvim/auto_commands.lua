@@ -35,6 +35,8 @@ function M._register_save_note(group)
 	})
 end
 
+function M._register_enter_note()
+
 function M._register_cmp_source(group)
 	local ok, cmp = pcall(require, "cmp")
 	if ok then
