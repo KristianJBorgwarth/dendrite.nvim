@@ -49,31 +49,35 @@ function M.completion_slug(query, callback)
 	end)
 end
 
-function M.save_note(path)
+function M.save_note(path, callback)
 	daemon.request("note/save", {
 		path = path,
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
 				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				return
+			end
+			if callback then
+				callback(response.error == nil)
 			end
 		end)
 	end)
 end
 
 function M.search_notes_by_tag(tag, callback)
-  daemon.request("note/search_by_tag", {
-    tag = tag,
-  }, function(response)
-    vim.schedule(function()
-      if response.error then
-        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
-        callback({})
-      else
-        callback(response.result or {})
-      end
-    end)
-  end)
+	daemon.request("note/search_by_tag", {
+		tag = tag,
+	}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				callback({})
+			else
+				callback(response.result or {})
+			end
+		end)
+	end)
 end
 
 function M.goto_note(link)
@@ -129,17 +133,17 @@ function M.get_backlinks(path, callback)
 end
 
 function M.diagnostics_links(path)
-  daemon.request("diagnostics/links", {
-    path = path,
-  }, function(response)
-    vim.schedule(function()
-      if response.error then
-        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
-      else
-        diagnostics.publish(vim.api.nvim_get_current_buf(), response.result)
-      end
-    end)
-  end)
+	daemon.request("diagnostics/links", {
+		path = path,
+	}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+			else
+				diagnostics.publish(vim.api.nvim_get_current_buf(), response.result)
+			end
+		end)
+	end)
 end
 
 function M.rebuild_index()

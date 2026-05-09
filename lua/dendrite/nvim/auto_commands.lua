@@ -31,7 +31,9 @@ function M._register_save_note(group)
 			if not vim.startswith(path, vault_path .. "/") then
 				return
 			end
-			daemon_commands.save_note(path)
+			daemon_commands.save_note(path, function()
+				daemon_commands.diagnostics_links(path)
+			end)
 		end,
 	})
 end
