@@ -1,5 +1,6 @@
 local M = {}
 local daemon = require("dendrite.core.daemon")
+local diagnostics = require("dendrite.nvim.diagnostics")
 
 function M.init_vault(name, path, templates)
 	daemon.request("vault/init", {
@@ -127,16 +128,15 @@ function M.get_backlinks(path, callback)
 	end)
 end
 
-function M.diagnostics_links(path, callback)
-  daemon.request("note/diagnostics_links", {
+function M.diagnostics_links(path)
+  daemon.request("diagnostics/links", {
     path = path,
   }, function(response)
     vim.schedule(function()
       if response.error then
         vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
-        callback({})
       else
-        callback(response.result)
+        diagnostics.publish(vim.api.nvim_get_current_buf(), response.result)
       end
     end)
   end)

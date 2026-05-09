@@ -7,17 +7,18 @@ local daemon = require("dendrite.core.daemon")
 function M.setup()
 	local group = vim.api.nvim_create_augroup("dendrite", { clear = true })
 	M._register_save_note(group)
-	M._register_cmp_source()
-  M._register_daemon_stop(group)
+	M._register_enter_note(group)
+	M._register_cmp_source(group)
+	M._register_daemon_stop(group)
 end
 
 function M._register_daemon_stop(group)
-  vim.api.nvim_create_autocmd("VimLeavePre", {
-    group = group,
-    callback = function()
-      daemon.stop()
-    end,
-  })
+	vim.api.nvim_create_autocmd("VimLeavePre", {
+		group = group,
+		callback = function()
+			daemon.stop()
+		end,
+	})
 end
 
 function M._register_save_note(group)
@@ -35,7 +36,20 @@ function M._register_save_note(group)
 	})
 end
 
-function M._register_enter_note()
+function M._register_enter_note(group)
+	vim.api.nvim_create_autocmd("BufEnter", {
+		group = group,
+		pattern = "*.md",
+		callback = function(args)
+			local path = vim.api.nvim_buf_get_name(args.buf)
+			local vault_path = config.options.vault_path
+			if not vim.startswith(path, vault_path .. "/") then
+				return
+			end
+			daemon_commands.diagnostics_links(path)
+		end,
+	})
+end
 
 function M._register_cmp_source(group)
 	local ok, cmp = pcall(require, "cmp")
@@ -43,7 +57,7 @@ function M._register_cmp_source(group)
 		cmp.register_source("dendrite", require("dendrite.cmp_source").new())
 
 		vim.api.nvim_create_autocmd("FileType", {
-      group = group,
+			group = group,
 			pattern = "markdown",
 			callback = function()
 				local global_sources = vim.deepcopy(require("cmp.config").get().sources or {})
