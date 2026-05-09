@@ -127,6 +127,21 @@ function M.get_backlinks(path, callback)
 	end)
 end
 
+function M.diagnostics_links(path, callback)
+  daemon.request("note/diagnostics_links", {
+    path = path,
+  }, function(response)
+    vim.schedule(function()
+      if response.error then
+        vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+        callback({})
+      else
+        callback(response.result)
+      end
+    end)
+  end)
+end
+
 function M.rebuild_index()
 	daemon.request("vault/rebuild", {}, function(response)
 		vim.schedule(function()
