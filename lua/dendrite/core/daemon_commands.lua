@@ -132,7 +132,7 @@ function M.get_backlinks(path, callback)
 	end)
 end
 
-function M.diagnostics_links(path)
+function M.diagnostics_links(path, bufnr)
 	daemon.request("diagnostics/links", {
 		path = path,
 	}, function(response)
@@ -140,7 +140,7 @@ function M.diagnostics_links(path)
 			if response.error then
 				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
 			else
-				diagnostics.publish(vim.api.nvim_get_current_buf(), response.result)
+				diagnostics.publish(bufnr, response.result)
 			end
 		end)
 	end)
