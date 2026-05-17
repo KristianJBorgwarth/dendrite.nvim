@@ -9,7 +9,10 @@ local commands = require("dendrite.nvim.commands")
 
 function M.setup(options)
 	config.setup(options)
-	daemon.start({ "/home/krjb/projects/dendrite.daemon/dendrite" })
+	local daemon_path = jit.os == "OSX"
+		and vim.fn.expand("/usr/local/bin/dendrite")
+		or vim.fn.expand("~/.local/bin/dendrite")
+	daemon.start({ daemon_path })
 	daemon_commands.init_vault(config.options.vault_name, config.options.vault_path, config.options.template_dir)
 	auto_commands.setup()
 	commands.setup()
