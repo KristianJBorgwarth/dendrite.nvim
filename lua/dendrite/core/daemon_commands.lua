@@ -2,17 +2,13 @@ local M = {}
 local daemon = require("dendrite.core.daemon")
 local diagnostics = require("dendrite.nvim.diagnostics")
 
-function M.init_vault(name, path, templates)
-	daemon.request("vault/init", {
-		vaultName = name,
-		vaultPath = path,
-		templateDirectory = templates,
-	}, function(response)
+function M.init_vault(config)
+	daemon.request("vault/init", { config = config }, function(response)
 		vim.schedule(function()
 			if response.error then
 				vim.notify("Daemon error: Failed to initialize vault: " .. response.error.message, vim.log.levels.ERROR)
 			else
-				vim.notify("Daemon Vault initialized successfully at: " .. path, vim.log.levels.INFO)
+				vim.notify("Daemon Vault initialized successfully at: " .. config.vault_path, vim.log.levels.INFO)
 			end
 		end)
 	end)
