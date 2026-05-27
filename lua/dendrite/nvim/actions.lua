@@ -8,9 +8,7 @@ local daemon_commands = require("dendrite.core.daemon_commands")
 
 function M.daily_note()
 	local title = os.date("%Y-%m-%d")
-	local template_path = utilities.get_template_path(config.options.daily_notes.template_name)
-
-	daemon_commands.create(title, template_path, config.options.daily_notes.dir)
+	daemon_commands.create(title, config.options.daily_notes.template_name, config.options.daily_notes.dir)
 end
 
 function M.new_scratch_note()
@@ -19,9 +17,7 @@ function M.new_scratch_note()
 		return
 	end
 
-	local template_path = utilities.get_template_path(config.options.scratch_notes.template_name)
-
-	daemon_commands.create(title, template_path, config.options.scratch_notes.dir)
+	daemon_commands.create(title, config.options.scratch_notes.template_name, config.options.scratch_notes.dir)
 end
 
 function M.create_note(template_name, root_dir)
@@ -29,7 +25,6 @@ function M.create_note(template_name, root_dir)
 	local full_root = vault_root .. "/" .. root_dir
 
 	local dirs = vault.list_directories(full_root, 5)
-	local template_path = utilities.get_template_path(template_name)
 
 	local title = ui.input("Enter Note Title:")
 	if not title or title == "" then
@@ -39,12 +34,12 @@ function M.create_note(template_name, root_dir)
 	local display_dirs = utilities.format_dirs_to_display(dirs, vault_root)
 
 	if #display_dirs == 0 then
-		daemon_commands.create(title, template_path, root_dir)
+		daemon_commands.create(title, template_name, root_dir)
 		return
 	end
 
 	ui.selector(display_dirs, function(selected_relative)
-		daemon_commands.create(title, template_path, selected_relative)
+		daemon_commands.create(title, template_name, selected_relative)
 	end)
 end
 
