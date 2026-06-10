@@ -55,7 +55,7 @@ function M.start(cmd)
 		return
 	end
 
-	state.proc = vim.system(cmd, {
+	state.proc = vim.system({ cmd }, {
 		stdin = true,
 		stdout = on_stdout,
 		stderr = on_stderr,
