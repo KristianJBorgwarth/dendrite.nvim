@@ -8,7 +8,6 @@ local daemon_commands = require("dendrite.core.daemon_commands")
 
 function M.daily_note()
 	local title = os.date("%Y-%m-%d")
-
 	daemon_commands.create(title, config.options.daily_notes.template_name, config.options.daily_notes.dir)
 end
 
@@ -18,9 +17,7 @@ function M.new_scratch_note()
 		return
 	end
 
-	local template_path = utilities.get_template_path(config.options.scratch_notes.template_name)
-
-	daemon_commands.create(title, template_path, config.options.scratch_notes.dir)
+	daemon_commands.create(title, config.options.scratch_notes.template_name, config.options.scratch_notes.dir)
 end
 
 function M.create_note(template_name, root_dir)
