@@ -25,14 +25,14 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
     require("dendrite").setup({
       vault_name = "my-vault",
       vault_path = "~/my-vault",
-      templates_dir = "~/my-vault/.templates",
+      templates_dir = "/.templates",
       daily_notes = {
-        dir = "~/my-vault/daily",
+        dir = "/daily",
         filename_format = "%Y-%m-%d.md",
         template_name = "daily",
       },
       scratch_notes = {
-        dir = "~/my-vault/scratches",
+        dir = "/scratches",
         template_name = "scratch",
       },
     })
