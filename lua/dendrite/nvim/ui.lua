@@ -3,9 +3,9 @@ local M = {}
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
+local sorters = require("telescope.sorters")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
-local async = require("plenary.async")
 
 function M.selector(resource, on_select)
 	pickers
@@ -49,38 +49,60 @@ function M.backink_viewer(backlinks)
 end
 
 function M.search(prompt_title, search_fn)
-	pickers
-		.new({}, {
-			prompt_title = prompt_title,
-			finder = finders.new_dynamic({
-				fn = async.wrap(function(prompt, cb)
-					if not prompt or prompt == "" then
-						cb({})
+	local results_cache = {}
+	local request_id = 0
+	local current_picker = nil
+
+	local entry_maker_fn = function(entry)
+		return {
+			value = entry,
+			display = entry.title,
+			ordinal = entry.title,
+			path = entry.path,
+		}
+	end
+
+	current_picker = pickers.new({}, {
+		prompt_title = prompt_title,
+		finder = finders.new_dynamic({
+			fn = function(prompt)
+				if not prompt or prompt == "" then
+					return {}
+				end
+
+				if results_cache[prompt] then
+					local r = results_cache[prompt]
+					results_cache[prompt] = nil
+					return r
+				end
+
+				request_id = request_id + 1
+				local my_id = request_id
+
+				search_fn(prompt, function(results)
+					if my_id ~= request_id or not current_picker then
 						return
 					end
-					search_fn(prompt, cb)
-				end, 2),
-				entry_maker = function(entry)
-					return {
-						value = entry,
-						display = entry.title,
-						ordinal = entry.title,
-						path = entry.path,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			previewer = conf.file_previewer({}),
-			attach_mappings = function(prompt_bufnr, _)
-				actions.select_default:replace(function()
-					actions.close(prompt_bufnr)
-					local selection = action_state.get_selected_entry().value
-					vim.cmd("edit " .. selection.path)
+					results_cache[prompt] = results
+					current_picker._on_lines(nil, nil, nil, 0, 1)
 				end)
-				return true
+
+				return {}
 			end,
-		})
-		:find()
+			entry_maker = entry_maker_fn,
+		}),
+		sorter = sorters.empty(),
+		previewer = conf.file_previewer({}),
+		attach_mappings = function(prompt_bufnr, _)
+			actions.select_default:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry().value
+				vim.cmd("edit " .. selection.path)
+			end)
+			return true
+		end,
+	})
+	current_picker:find()
 end
 
 function M.input(prompt)
