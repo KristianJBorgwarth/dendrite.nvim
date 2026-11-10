@@ -85,6 +85,7 @@ function M.setup(opts)
 	M.vaults = build_vaults(opts)
 
 	local default = opts.default_vault
+	M.default_vault = default
 	if default ~= nil and M.vaults[default] == nil then
 		error("dendrite.config.setup: default_vault '" .. default .. "' is not in 'vaults'")
 	end
@@ -109,6 +110,15 @@ function M.new_vault(name, path)
 	vault.vault_name = name
 	vault.vault_path = path
 	return normalize(vault)
+end
+
+---Registers a vault the daemon knows about but the setup does not list.
+---@param name string
+---@param path string
+function M.adopt(name, path)
+	if M.vaults[name] == nil then
+		M.vaults[name] = M.new_vault(name, path)
+	end
 end
 
 ---@param vault table

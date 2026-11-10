@@ -36,7 +36,6 @@ function M.create(title, template_name, dir)
 		title = title,
 		templateName = template_name,
 		directory = dir,
-		vault = config.active,
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -51,7 +50,6 @@ end
 function M.completion_slug(query, callback)
 	daemon.request("completion/slug", {
 		query = query,
-		vault = config.vault_name_for(vim.api.nvim_buf_get_name(0)),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -67,7 +65,6 @@ end
 function M.save_note(path, callback)
 	daemon.request("note/save", {
 		path = path,
-		vault = config.vault_name_for(path),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -84,7 +81,6 @@ end
 function M.search_notes_by_tag(tag, callback)
 	daemon.request("note/search_by_tag", {
 		tag = tag,
-		vault = config.active,
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -100,7 +96,6 @@ end
 function M.goto_note(link)
 	daemon.request("note/goto", {
 		link = link,
-		vault = config.vault_name_for(vim.api.nvim_buf_get_name(0)),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -122,7 +117,6 @@ end
 function M.completion_tag(query, callback)
 	daemon.request("completion/tag", {
 		query = query,
-		vault = config.vault_name_for(vim.api.nvim_buf_get_name(0)),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -138,7 +132,6 @@ end
 function M.get_backlinks(path, callback)
 	daemon.request("note/backlinks", {
 		path = path,
-		vault = config.vault_name_for(path),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -155,7 +148,6 @@ end
 function M.diagnostics_links(path, bufnr)
 	daemon.request("diagnostics/links", {
 		path = path,
-		vault = config.vault_name_for(path),
 	}, function(response)
 		vim.schedule(function()
 			if response.error then
@@ -164,6 +156,33 @@ function M.diagnostics_links(path, bufnr)
 				diagnostics.publish(bufnr, response.result)
 			end
 		end)
+	end)
+end
+
+function M.use_vault(name, callback)
+	daemon.request("vault/use", { vault = name }, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				return
+			end
+			callback()
+		end)
+	end)
+end
+
+-- The daemon owns which vaults exist and which is active; mirror that locally.
+function M.sync_vaults(callback)
+	M.list_vaults(function(vaults)
+		for _, info in ipairs(vaults) do
+			config.adopt(info.name, info.path)
+			if info.active then
+				config.set_active(info.name)
+			end
+		end
+		if callback then
+			callback()
+		end
 	end)
 end
 
@@ -193,7 +212,7 @@ function M.create_vault(vault, callback)
 end
 
 function M.rebuild_index()
-	daemon.request("vault/rebuild", { vault = config.active }, function(response)
+	daemon.request("vault/rebuild", {}, function(response)
 		vim.schedule(function()
 			if response.error then
 				vim.notify("Daemon error: Failed to rebuild index: " .. response.error.message, vim.log.levels.ERROR)

@@ -24,6 +24,14 @@ function M.setup()
 		actions.switch_vault()
 	end, { desc = "Switch the active vault" })
 
+	vim.api.nvim_create_user_command("Dv", function()
+		actions.switch_vault()
+	end, { desc = "Switch the active vault (short)" })
+
+	vim.api.nvim_create_user_command("Dvc", function()
+		actions.create_vault()
+	end, { desc = "Create a new vault (short)" })
+
 	vim.api.nvim_create_user_command("DendriteVaultCreate", function()
 		actions.create_vault()
 	end, { desc = "Create a new vault" })

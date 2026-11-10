@@ -43,11 +43,9 @@ function M._register_enter_note(group)
 		pattern = "*.md",
 		callback = function(args)
 			local path = vim.api.nvim_buf_get_name(args.buf)
-			local vault = config.vault_for_path(path)
-			if not vault then
+			if not config.vault_for_path(path) then
 				return
 			end
-			config.set_active(vault.vault_name)
 			daemon_commands.diagnostics_links(path, args.buf)
 		end,
 	})

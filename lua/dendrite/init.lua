@@ -15,6 +15,13 @@ function M.setup(options)
 	for _, name in ipairs(config.names()) do
 		daemon_commands.init_vault(config.vaults[name])
 	end
+	if config.default_vault then
+		daemon_commands.use_vault(config.default_vault, function()
+			daemon_commands.sync_vaults()
+		end)
+	else
+		daemon_commands.sync_vaults()
+	end
 	auto_commands.setup()
 	commands.setup()
 end
