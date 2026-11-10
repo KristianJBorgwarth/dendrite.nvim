@@ -8,7 +8,8 @@ local daemon_commands = require("dendrite.core.daemon_commands")
 
 function M.daily_note()
 	local title = os.date("%Y-%m-%d")
-	daemon_commands.create(title, config.options.daily_notes.template_name, config.options.daily_notes.dir)
+	local daily = config.vault().daily_notes
+	daemon_commands.create(title, daily.template_name, daily.dir)
 end
 
 function M.new_scratch_note()
@@ -17,11 +18,12 @@ function M.new_scratch_note()
 		return
 	end
 
-	daemon_commands.create(title, config.options.scratch_notes.template_name, config.options.scratch_notes.dir)
+	local scratch = config.vault().scratch_notes
+	daemon_commands.create(title, scratch.template_name, scratch.dir)
 end
 
 function M.create_note(template_name, root_dir)
-	local vault_root = config.options.vault_path
+	local vault_root = config.vault().vault_path
 	local full_root = vault_root .. "/" .. root_dir
 
 	local dirs = vault.list_directories(full_root, 5)
