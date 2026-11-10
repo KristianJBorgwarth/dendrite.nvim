@@ -101,6 +101,21 @@ function M.vault()
 	return M.vaults[M.active]
 end
 
+---Builds (without registering) a vault that inherits the active vault's settings.
+---@param name string
+---@param path string
+function M.new_vault(name, path)
+	local vault = vim.deepcopy(M.vault())
+	vault.vault_name = name
+	vault.vault_path = path
+	return normalize(vault)
+end
+
+---@param vault table
+function M.register(vault)
+	M.vaults[vault.vault_name] = vault
+end
+
 ---@param name string
 function M.set_active(name)
 	if M.vaults[name] == nil then

@@ -20,6 +20,14 @@ function M.setup()
     actions.view_backlinks()
   end, { desc = "View backlinks for the current note (short)" })
 
+	vim.api.nvim_create_user_command("DendriteVault", function()
+		actions.switch_vault()
+	end, { desc = "Switch the active vault" })
+
+	vim.api.nvim_create_user_command("DendriteVaultCreate", function()
+		actions.create_vault()
+	end, { desc = "Create a new vault" })
+
 	vim.api.nvim_create_user_command("DendriteSearchTags", function()
 		actions.search_notes_by_tag()
 	end, { desc = "Search for notes by tag" })

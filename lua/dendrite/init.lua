@@ -35,6 +35,11 @@ function M.search_frontmatter(keys)
 	actions.search_frontmatter(keys)
 end
 
+---@return string the active vault name, handy for a statusline
+function M.vault()
+	return config.active
+end
+
 function M.goto_link()
 	actions.goto_link()
 end

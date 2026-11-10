@@ -70,6 +70,50 @@ function M.view_backlinks()
 	end)
 end
 
+function M.switch_vault()
+	daemon_commands.list_vaults(function(vaults)
+		if #vaults == 0 then
+			vim.notify("No vaults registered", vim.log.levels.WARN)
+			return
+		end
+		vim.ui.select(vaults, {
+			prompt = "Select vault",
+			format_item = function(v)
+				local mark = v.name == config.active and "* " or "  "
+				return mark .. v.name .. "  (" .. v.noteCount .. " notes)  " .. v.path
+			end,
+		}, function(choice)
+			if not choice then
+				return
+			end
+			if not config.vaults[choice.name] then
+				vim.notify("Vault '" .. choice.name .. "' is not in your dendrite setup", vim.log.levels.WARN)
+				return
+			end
+			config.set_active(choice.name)
+			vim.notify("Active vault: " .. choice.name, vim.log.levels.INFO)
+		end)
+	end)
+end
+
+function M.create_vault()
+	local name = ui.input("Vault name: ")
+	if not name or name == "" then
+		return
+	end
+	local path = ui.input("Vault path: ")
+	if not path or path == "" then
+		return
+	end
+
+	local vault = config.new_vault(name, path)
+	daemon_commands.create_vault(vault, function()
+		config.register(vault)
+		config.set_active(name)
+		vim.notify("Created vault '" .. name .. "' at " .. vault.vault_path, vim.log.levels.INFO)
+	end)
+end
+
 function M.search_notes_by_tag()
   ui.search("search by tag", daemon_commands.search_notes_by_tag)
 end
