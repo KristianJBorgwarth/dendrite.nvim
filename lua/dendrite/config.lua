@@ -57,12 +57,13 @@ local function build_vaults(opts)
 	merged.vault_path = nil
 
 	for name, entry in pairs(opts.vaults) do
-		if type(entry) ~= "table" or type(entry.path) ~= "string" then
-			error("dendrite.config.setup: vault '" .. name .. "' needs a 'path'")
+		if type(entry) ~= "table" then
+			error("dendrite.config.setup: vault '" .. name .. "' must be a table")
 		end
 		local vault = vim.tbl_deep_extend("force", vim.deepcopy(merged), entry)
 		vault.vault_name = name
-		vault.vault_path = entry.path
+		-- Without a path the daemon's registry is the source of truth for where the vault lives.
+		vault.vault_path = entry.path or ""
 		vault.path = nil
 		vaults[name] = normalize(vault)
 	end
@@ -118,6 +119,16 @@ end
 function M.adopt(name, path)
 	if M.vaults[name] == nil then
 		M.vaults[name] = M.new_vault(name, path)
+	end
+end
+
+---Follows the daemon's idea of where a known vault lives (it may have been moved).
+---@param name string
+---@param path string
+function M.set_path(name, path)
+	local vault = M.vaults[name]
+	if vault then
+		vault.vault_path = path:gsub("(.)/+$", "%1")
 	end
 end
 

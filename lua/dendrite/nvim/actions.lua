@@ -80,13 +80,15 @@ function M.switch_vault()
 			prompt = "Select vault",
 			format_item = function(v)
 				local mark = v.name == config.active and "* " or "  "
-				return mark .. v.name .. "  (" .. v.noteCount .. " notes)  " .. v.path
+				local missing = v.missing and "  (missing)" or ""
+				return mark .. v.name .. "  (" .. v.noteCount .. " notes)  " .. v.path .. missing
 			end,
 		}, function(choice)
 			if not choice then
 				return
 			end
 			config.adopt(choice.name, choice.path)
+			config.set_path(choice.name, choice.path)
 			daemon_commands.use_vault(choice.name, function()
 				config.set_active(choice.name)
 				vim.notify("Active vault: " .. choice.name, vim.log.levels.INFO)
@@ -110,6 +112,40 @@ function M.create_vault()
 		config.register(vault)
 		config.set_active(name)
 		vim.notify("Created vault '" .. name .. "' at " .. vault.vault_path, vim.log.levels.INFO)
+	end)
+end
+
+function M.relocate_vault()
+	local name = config.active
+	local path = ui.input("New path for vault '" .. name .. "' (empty = " .. vim.fn.getcwd() .. "): ")
+	if path == nil then
+		return
+	end
+	if path == "" then
+		path = vim.fn.getcwd()
+	end
+	path = vim.fn.fnamemodify(vim.fn.expand(path), ":p"):gsub("(.)/+$", "%1")
+
+	daemon_commands.relocate_vault(name, path, function()
+		config.set_path(name, path)
+		vim.notify("Vault '" .. name .. "' now lives at " .. path, vim.log.levels.INFO)
+	end)
+end
+
+function M.open_vault()
+	local path = ui.input("Open folder as vault (empty = " .. vim.fn.getcwd() .. "): ")
+	if path == nil then
+		return
+	end
+	if path == "" then
+		path = vim.fn.getcwd()
+	end
+	path = vim.fn.fnamemodify(vim.fn.expand(path), ":p"):gsub("(.)/+$", "%1")
+
+	daemon_commands.open_vault(path, function()
+		daemon_commands.sync_vaults(function()
+			vim.notify("Opened vault at " .. path .. " (active: " .. config.active .. ")", vim.log.levels.INFO)
+		end)
 	end)
 end
 

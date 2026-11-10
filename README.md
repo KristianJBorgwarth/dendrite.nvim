@@ -59,3 +59,5 @@ The daemon owns the vault state: it remembers every vault across restarts, and `
 - `:DendriteVault` picks from the daemon's vault list and switches the active vault. Search, tag search, completion and note creation then target it.
 - `:DendriteVaultCreate` prompts for a name and path (an empty path means the current directory) and creates the vault (the new vault inherits the active vault's template and daily/scratch settings).
 - `require("dendrite").vault()` returns the active vault name, e.g. for a statusline.
+- A vault's identity is its name, not its folder. If you move a folder, run `:DendriteVaultRelocate` (empty path = current directory) and the daemon keeps the index. `:DendriteVault` marks vaults whose folder is missing. `path` may be omitted for a vault in `vaults` (`atlas = {}`) once the daemon knows it, and the daemon's location always wins over the config.
+- `:DendriteVaultOpen` registers any folder containing `.dendrite/vault.json` (written by `:DendriteVaultCreate`) as a vault.
