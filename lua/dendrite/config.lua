@@ -15,7 +15,6 @@ local defaults = {
 	},
 }
 
--- Options that describe the plugin itself, not a single vault.
 local global_keys = { vaults = true, default_vault = true, daemon_path = true }
 
 M.options = {}
@@ -47,7 +46,6 @@ local function build_vaults(opts)
 	local merged = vim.tbl_deep_extend("force", vim.deepcopy(defaults), shared)
 	local vaults = {}
 
-	-- The old single vault_name/vault_path form is a one-vault list.
 	if opts.vaults == nil then
 		vaults[merged.vault_name] = normalize(merged)
 		return vaults
@@ -62,7 +60,6 @@ local function build_vaults(opts)
 		end
 		local vault = vim.tbl_deep_extend("force", vim.deepcopy(merged), entry)
 		vault.vault_name = name
-		-- Without a path the daemon's registry is the source of truth for where the vault lives.
 		vault.vault_path = entry.path or ""
 		vault.path = nil
 		vaults[name] = normalize(vault)
@@ -93,19 +90,14 @@ function M.setup(opts)
 	M.active = default or sorted_names()[1]
 end
 
----@return string[] vault names, sorted
 function M.names()
 	return sorted_names()
 end
 
----@return table the active vault's settings
 function M.vault()
 	return M.vaults[M.active]
 end
 
----Builds (without registering) a vault that inherits the active vault's settings.
----@param name string
----@param path string
 function M.new_vault(name, path)
 	local vault = vim.deepcopy(M.vault())
 	vault.vault_name = name
@@ -113,18 +105,12 @@ function M.new_vault(name, path)
 	return normalize(vault)
 end
 
----Registers a vault the daemon knows about but the setup does not list.
----@param name string
----@param path string
 function M.adopt(name, path)
 	if M.vaults[name] == nil then
 		M.vaults[name] = M.new_vault(name, path)
 	end
 end
 
----Follows the daemon's idea of where a known vault lives (it may have been moved).
----@param name string
----@param path string
 function M.set_path(name, path)
 	local vault = M.vaults[name]
 	if vault then
@@ -132,12 +118,10 @@ function M.set_path(name, path)
 	end
 end
 
----@param vault table
 function M.register(vault)
 	M.vaults[vault.vault_name] = vault
 end
 
----@param name string
 function M.set_active(name)
 	if M.vaults[name] == nil then
 		error("dendrite: unknown vault '" .. name .. "'")
@@ -145,8 +129,6 @@ function M.set_active(name)
 	M.active = name
 end
 
----@param path string absolute file path
----@return table|nil the vault whose root contains the path (longest root wins)
 function M.vault_for_path(path)
 	local best
 	for _, vault in pairs(M.vaults) do
@@ -158,8 +140,6 @@ function M.vault_for_path(path)
 	return best
 end
 
----@param path string|nil absolute file path
----@return string the name of the vault a request about this path belongs to
 function M.vault_name_for(path)
 	local vault = path and M.vault_for_path(path)
 	return vault and vault.vault_name or M.active

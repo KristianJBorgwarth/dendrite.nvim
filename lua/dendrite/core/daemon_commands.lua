@@ -171,7 +171,6 @@ function M.use_vault(name, callback)
 	end)
 end
 
--- The daemon owns which vaults exist and which is active; mirror that locally.
 function M.sync_vaults(callback)
 	M.list_vaults(function(vaults)
 		for _, info in ipairs(vaults) do

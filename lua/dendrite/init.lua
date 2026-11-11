@@ -12,8 +12,6 @@ function M.setup(options)
 	local daemon_path = config.options.daemon_path
 		or (jit.os == "OSX" and "/usr/local/bin/dendrite" or "~/.local/bin/dendrite")
 	daemon.start(vim.fn.expand(daemon_path))
-	-- The daemon's catalog wins: only vaults it does not know yet are initialized from the config,
-	-- so a vault that moved on disk is not re-registered at its old path.
 	daemon_commands.list_vaults(function(known)
 		local registered = {}
 		for _, info in ipairs(known) do
@@ -57,7 +55,6 @@ function M.search_frontmatter(keys)
 	actions.search_frontmatter(keys)
 end
 
----@return string the active vault name, handy for a statusline
 function M.vault()
 	return config.active
 end
