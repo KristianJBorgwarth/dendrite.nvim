@@ -54,8 +54,8 @@ require("dendrite").setup({
 })
 ```
 
-Every daemon call carries the vault name. Opening a note inside a vault's root makes that vault active; otherwise the active vault is used. The single `vault_name`/`vault_path` form keeps working as a one-vault list.
+The daemon owns the vault state: it remembers every vault across restarts, and `:DendriteVault` sets the active one there. Requests about a file inside a vault go to that vault; everything else goes to the active vault. Vaults not listed in `setup` are picked up from the daemon with the shared defaults.
 
 - `:DendriteVault` picks from the daemon's vault list and switches the active vault. Search, tag search, completion and note creation then target it.
-- `:DendriteVaultCreate` prompts for a name and path and creates the vault (the new vault inherits the active vault's template and daily/scratch settings).
+- `:DendriteVaultCreate` prompts for a name and path (an empty path means the current directory) and creates the vault (the new vault inherits the active vault's template and daily/scratch settings).
 - `require("dendrite").vault()` returns the active vault name, e.g. for a statusline.

@@ -86,12 +86,11 @@ function M.switch_vault()
 			if not choice then
 				return
 			end
-			if not config.vaults[choice.name] then
-				vim.notify("Vault '" .. choice.name .. "' is not in your dendrite setup", vim.log.levels.WARN)
-				return
-			end
-			config.set_active(choice.name)
-			vim.notify("Active vault: " .. choice.name, vim.log.levels.INFO)
+			config.adopt(choice.name, choice.path)
+			daemon_commands.use_vault(choice.name, function()
+				config.set_active(choice.name)
+				vim.notify("Active vault: " .. choice.name, vim.log.levels.INFO)
+			end)
 		end)
 	end)
 end
@@ -101,9 +100,9 @@ function M.create_vault()
 	if not name or name == "" then
 		return
 	end
-	local path = ui.input("Vault path: ")
+	local path = ui.input("Vault path (empty = " .. vim.fn.getcwd() .. "): ")
 	if not path or path == "" then
-		return
+		path = vim.fn.getcwd()
 	end
 
 	local vault = config.new_vault(name, path)
