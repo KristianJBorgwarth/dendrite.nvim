@@ -115,23 +115,6 @@ function M.create_vault()
 	end)
 end
 
-function M.relocate_vault()
-	local name = config.active
-	local path = ui.input("New path for vault '" .. name .. "' (empty = " .. vim.fn.getcwd() .. "): ")
-	if path == nil then
-		return
-	end
-	if path == "" then
-		path = vim.fn.getcwd()
-	end
-	path = vim.fn.fnamemodify(vim.fn.expand(path), ":p"):gsub("(.)/+$", "%1")
-
-	daemon_commands.relocate_vault(name, path, function()
-		config.set_path(name, path)
-		vim.notify("Vault '" .. name .. "' now lives at " .. path, vim.log.levels.INFO)
-	end)
-end
-
 function M.open_vault()
 	local path = ui.input("Open folder as vault (empty = " .. vim.fn.getcwd() .. "): ")
 	if path == nil then

@@ -179,7 +179,7 @@ function M.sync_vaults(callback)
 			config.set_path(info.name, info.path)
 			if info.missing then
 				vim.notify(
-					"Vault '" .. info.name .. "' points at " .. info.path .. ", which is missing. Run :DendriteVaultRelocate",
+					"Vault '" .. info.name .. "' points at " .. info.path .. ", which is missing. Open its new folder with :Dvo",
 					vim.log.levels.WARN
 				)
 			end
@@ -211,18 +211,6 @@ function M.create_vault(vault, callback)
 		vim.schedule(function()
 			if response.error then
 				vim.notify("Daemon error: Failed to create vault: " .. response.error.message, vim.log.levels.ERROR)
-				return
-			end
-			callback()
-		end)
-	end)
-end
-
-function M.relocate_vault(name, path, callback)
-	daemon.request("vault/relocate", { vault = name, path = path }, function(response)
-		vim.schedule(function()
-			if response.error then
-				vim.notify("Daemon error: Failed to relocate vault: " .. response.error.message, vim.log.levels.ERROR)
 				return
 			end
 			callback()
