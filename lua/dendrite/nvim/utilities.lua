@@ -16,7 +16,7 @@ function M.strip_dirs_from_path(path)
 end
 
 function M.get_template_path(template_name)
-	local templates_dir = vim.fn.expand(config.options.templates_dir)
+	local templates_dir = config.vault().templates_dir
 	return templates_dir .. "/" .. template_name .. ".md"
 end
 

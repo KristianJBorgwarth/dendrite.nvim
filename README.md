@@ -39,3 +39,19 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
   end,
 }
 ```
+
+## Multiple vaults
+
+Pass `vaults` instead of `vault_name`/`vault_path`. Top-level options (`templates_dir`, `daily_notes`, `scratch_notes`) are shared defaults that each vault can override.
+
+```lua
+require("dendrite").setup({
+  vaults = {
+    atlas = { path = "~/atlas" },
+    work = { path = "~/work-notes", daily_notes = { dir = "/journal" } },
+  },
+  default_vault = "atlas",
+})
+```
+
+Every daemon call carries the vault name. Opening a note inside a vault's root makes that vault active; otherwise the active vault is used. The single `vault_name`/`vault_path` form keeps working as a one-vault list.
