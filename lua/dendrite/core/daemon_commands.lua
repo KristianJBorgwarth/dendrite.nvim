@@ -171,11 +171,17 @@ function M.use_vault(name, callback)
 	end)
 end
 
--- The daemon owns which vaults exist and which is active; mirror that locally.
 function M.sync_vaults(callback)
 	M.list_vaults(function(vaults)
 		for _, info in ipairs(vaults) do
 			config.adopt(info.name, info.path)
+			config.set_path(info.name, info.path)
+			if info.missing then
+				vim.notify(
+					"Vault '" .. info.name .. "' points at " .. info.path .. ", which is missing. Open its new folder with :Dvo",
+					vim.log.levels.WARN
+				)
+			end
 			if info.active then
 				config.set_active(info.name)
 			end
@@ -204,6 +210,18 @@ function M.create_vault(vault, callback)
 		vim.schedule(function()
 			if response.error then
 				vim.notify("Daemon error: Failed to create vault: " .. response.error.message, vim.log.levels.ERROR)
+				return
+			end
+			callback()
+		end)
+	end)
+end
+
+function M.open_vault(path, callback)
+	daemon.request("vault/open", { path = path }, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: Failed to open vault: " .. response.error.message, vim.log.levels.ERROR)
 				return
 			end
 			callback()

@@ -12,16 +12,29 @@ function M.setup(options)
 	local daemon_path = config.options.daemon_path
 		or (jit.os == "OSX" and "/usr/local/bin/dendrite" or "~/.local/bin/dendrite")
 	daemon.start(vim.fn.expand(daemon_path))
-	for _, name in ipairs(config.names()) do
-		daemon_commands.init_vault(config.vaults[name])
-	end
-	if config.default_vault then
-		daemon_commands.use_vault(config.default_vault, function()
+	daemon_commands.list_vaults(function(known)
+		local registered = {}
+		for _, info in ipairs(known) do
+			registered[info.name] = true
+		end
+		for _, name in ipairs(config.names()) do
+			local vault = config.vaults[name]
+			if not registered[name] then
+				if vault.vault_path == "" then
+					vim.notify("Dendrite: unknown vault '" .. name .. "' has no path", vim.log.levels.ERROR)
+				else
+					daemon_commands.init_vault(vault)
+				end
+			end
+		end
+		if config.default_vault then
+			daemon_commands.use_vault(config.default_vault, function()
+				daemon_commands.sync_vaults()
+			end)
+		else
 			daemon_commands.sync_vaults()
-		end)
-	else
-		daemon_commands.sync_vaults()
-	end
+		end
+	end)
 	auto_commands.setup()
 	commands.setup()
 end
@@ -42,7 +55,6 @@ function M.search_frontmatter(keys)
 	actions.search_frontmatter(keys)
 end
 
----@return string the active vault name, handy for a statusline
 function M.vault()
 	return config.active
 end

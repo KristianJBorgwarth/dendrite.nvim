@@ -36,6 +36,14 @@ function M.setup()
 		actions.create_vault()
 	end, { desc = "Create a new vault" })
 
+	vim.api.nvim_create_user_command("DendriteVaultOpen", function()
+		actions.open_vault()
+	end, { desc = "Open a folder with .dendrite/vault.json as a vault" })
+
+	vim.api.nvim_create_user_command("Dvo", function()
+		actions.open_vault()
+	end, { desc = "Open a folder as a vault (short)" })
+
 	vim.api.nvim_create_user_command("DendriteSearchTags", function()
 		actions.search_notes_by_tag()
 	end, { desc = "Search for notes by tag" })
