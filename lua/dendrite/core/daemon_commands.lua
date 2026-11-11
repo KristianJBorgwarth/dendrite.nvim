@@ -167,6 +167,31 @@ function M.diagnostics_links(path, bufnr)
 	end)
 end
 
+function M.list_vaults(callback)
+	daemon.request("vault/list", {}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				callback({})
+			else
+				callback(response.result or {})
+			end
+		end)
+	end)
+end
+
+function M.create_vault(vault, callback)
+	daemon.request("vault/create", init_params(vault), function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: Failed to create vault: " .. response.error.message, vim.log.levels.ERROR)
+				return
+			end
+			callback()
+		end)
+	end)
+end
+
 function M.rebuild_index()
 	daemon.request("vault/rebuild", { vault = config.active }, function(response)
 		vim.schedule(function()
