@@ -136,4 +136,8 @@ function M.search_notes_by_tag()
   ui.search("search by tag", daemon_commands.search_notes_by_tag)
 end
 
+function M.search_notes_by_cf()
+  ui.search("search by frontmatter (key:value)", daemon_commands.search_notes_by_cf)
+end
+
 return M

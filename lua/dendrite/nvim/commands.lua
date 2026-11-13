@@ -51,6 +51,14 @@ function M.setup()
 	vim.api.nvim_create_user_command("Dts", function()
 		actions.search_notes_by_tag()
 	end, { desc = "View backlinks for the current note (short)" })
+
+	vim.api.nvim_create_user_command("DendriteSearchFrontmatter", function()
+		actions.search_notes_by_cf()
+	end, { desc = "Search for notes by custom frontmatter" })
+
+	vim.api.nvim_create_user_command("Dtf", function()
+		actions.search_notes_by_cf()
+	end, { desc = "Search for notes by custom frontmatter (short)" })
 end
 
 return M

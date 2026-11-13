@@ -93,6 +93,27 @@ function M.search_notes_by_tag(tag, callback)
 	end)
 end
 
+function M.search_notes_by_cf(query, callback)
+	local key, value = query:match("^%s*([^:=%s]+)%s*[:=]%s*(.-)%s*$")
+	if not key or value == "" then
+		callback({})
+		return
+	end
+	daemon.request("note/search_by_cf", {
+		key = key,
+		value = value,
+	}, function(response)
+		vim.schedule(function()
+			if response.error then
+				vim.notify("Daemon error: " .. response.error.message, vim.log.levels.ERROR)
+				callback({})
+			else
+				callback(response.result or {})
+			end
+		end)
+	end)
+end
+
 function M.goto_note(link)
 	daemon.request("note/goto", {
 		link = link,
